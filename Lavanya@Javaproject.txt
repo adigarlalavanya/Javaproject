@@ -1,0 +1,181 @@
+﻿
+
+package com.hcltech.project;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
+class User {
+    private String username;
+    private String password;
+    private String email;
+    private String phoneno;
+
+    public User(String username, String password, String email, String phoneno) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.phoneno = phoneno;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+}
+
+
+
+
+
+
+
+
+package com.hcltech.project;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.Scanner;
+
+public class UserRegistration {
+
+    private static boolean loggedIn = false;
+    private static String username;
+    private static String password;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        User user = null;
+
+        while (true) {
+            System.out.println("Menu\n1. Log in\n2. Register new user\n3. Exit");
+            System.out.println("Enter your choice:");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline
+
+            switch (choice) {
+                case 1:
+                    if (user != null) {
+                        login(scanner, user);
+                    } else {
+                        System.out.println("No registered users. Please register first.");
+                    }
+                    break;
+                case 2:
+                    try {
+                        user = registerUser(scanner);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    break;
+                case 3:
+                    System.out.println("Exiting...");
+                    return;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+                    break;
+            }
+        }
+    }
+
+    public static User registerUser(Scanner scanner) throws IOException {
+        System.out.println("\n** Registration **");
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
+        do {
+            System.out.println("Enter Username (must be alphabetic):");
+            username = br.readLine();
+            if (!isValidName(username)) {
+                System.out.println("Invalid username format. Please enter alphabetic characters only.");
+            }
+        } while (!isValidName(username));
+
+        // Validate password
+        do {
+            System.out.println("Password Creation: \n1. Minimum length of 8 characters\n2. At least one uppercase\n3. At least one lowercase\n4. At least one special character");
+            System.out.println("Enter the password:");
+            password = br.readLine();
+            if (!isValidPassword(password)) {
+                System.out.println("Invalid password format. Please check the requirements.");
+            }
+        } while (!isValidPassword(password));
+
+        // Validate email
+        String email;
+        do {
+            System.out.println("Enter Email:");
+            email = br.readLine();
+            if (!isValidEmail(email)) {
+                System.out.println("Invalid email format. Please enter a valid email address.");
+            }
+        } while (!isValidEmail(email));
+
+        // Validate phone number
+        String phoneno;
+        do {
+            System.out.println("Enter Phone Number:");
+            phoneno = br.readLine();
+            if (!isValidPhonenumber(phoneno)) {
+                System.out.println("Invalid phone number format. Please enter a valid phone number.");
+            }
+        } while (!isValidPhonenumber(phoneno));
+
+        return new User(username, password, email, phoneno);
+    }
+
+    private static boolean isValidPhonenumber(String phoneno) {
+        return phoneno.matches("\\d{10}");
+    }
+
+    private static boolean isValidEmail(String email) {
+        String regularForm = "^[a-zA-Z0-9_+&-]+(?:\\.[a-zA-Z0-9_+&-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+        return email.matches(regularForm);
+    }
+
+    private static boolean isValidPassword(String password) {
+        if (password.length() < 8) {
+            return false;
+        }
+        if (!password.matches(".*[A-Z].*")) {
+            return false;
+        }
+        if (!password.matches(".*[a-z].*")) {
+            return false;
+        }
+        if (!password.matches(".*[!@#$%^&()-+=\\[\\]{};:'\"\\\\|,.<>/?].*")) {
+            return false;
+        }
+        return true;
+    }
+
+    private static boolean isValidName(String username) {
+        return username.matches("[a-zA-Z]+");
+    }
+
+    public static void login(Scanner scanner, User user) {
+        System.out.println("Logging in...");
+
+        System.out.println("Enter Username:");
+        String enteredUsername = scanner.nextLine();
+        if (enteredUsername.equals(user.getUsername())) {
+            System.out.println("Enter Password:");
+            String enteredPassword = scanner.nextLine();
+            if (enteredPassword.equals(user.getPassword())) {
+                loggedIn = true;
+                System.out.println("....LOGIN SUCCESSFUL....");
+            } else {
+                System.out.println("Invalid password. Please try again.");
+            }
+        } else {
+            System.out.println("Invalid username. Please try again.");
+        }
+    }
+}
+
+
